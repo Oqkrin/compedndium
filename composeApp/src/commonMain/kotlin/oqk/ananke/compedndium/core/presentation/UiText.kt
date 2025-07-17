@@ -1,4 +1,4 @@
-package oqk.ananke.compedndium.error.container
+package oqk.ananke.compedndium.core.presentation
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.resources.StringResource

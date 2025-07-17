@@ -1,6 +1,6 @@
-package oqk.ananke.compedndium.entity.core
+package oqk.ananke.compedndium.entity.domain
 
-import oqk.ananke.compedndium.field.core.Field
+import oqk.ananke.compedndium.field.domain.Field
 
 data class Entity(
     val id: String,

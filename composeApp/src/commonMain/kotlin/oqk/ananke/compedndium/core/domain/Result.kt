@@ -1,8 +1,8 @@
-package oqk.ananke.compedndium.error.core
+package oqk.ananke.compedndium.core.domain
 
 sealed interface Result<out D, out E: Error> {
     data class Success<out D>(val data: D): Result<D, Nothing>
-    data class Error<out E: oqk.ananke.compedndium.error.core.Error>(val error: E):
+    data class Error<out E: oqk.ananke.compedndium.core.domain.Error>(val error: E):
         Result<Nothing, E>
 }
 
