@@ -6,7 +6,7 @@ import oqk.ananke.compedndium.core.presentation.UiText
 
 data class EntityListState(
     val searchQuery: String = "Search...",
-    val searchResults: List<Entity> = emptyList(),
+    val currentEntities: List<Entity> = emptyList(),
     val favorites: List<Entity> = emptyList(),
     val types: List<EntityType> = emptyList(),
     val tabIndex: Int = 0,

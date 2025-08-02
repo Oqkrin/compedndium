@@ -12,7 +12,7 @@ class EntityListViewModel: ViewModel() {
     fun onAction(action: EntityListAction) {
         when(action) {
             is EntityListAction.OnEntityClick -> {
-
+                TODO()
             }
             is EntityListAction.OnSearchQueryChange -> {
                 _state.update {
@@ -21,9 +21,15 @@ class EntityListViewModel: ViewModel() {
             }
             is EntityListAction.OnTabSelection -> {
                 _state.update {
-                    it.copy(tabIndex = action.index)
+                    it.copy(tabIndex = action.entityType.ordinal)
                 }
             }
+
+            is EntityListAction.OnChangeModeButtonClick -> TODO()
+            is EntityListAction.OnCreateButtonClick -> TODO()
+            is EntityListAction.OnCreateButtonLongClick -> TODO()
+            is EntityListAction.OnEntityLongClick -> TODO()
+            is EntityListAction.OnFilterButtonClick -> TODO()
         }
     }
 }
