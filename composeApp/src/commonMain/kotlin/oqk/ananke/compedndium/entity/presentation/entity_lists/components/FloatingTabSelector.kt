@@ -17,16 +17,19 @@ import oqk.ananke.compedndium.entity.presentation.entity_lists.EntityListAction
 @Composable
 fun FloatingTabSelector(
     entityTypes: List<EntityType>,
-    tabMenuModifier: Modifier,
-    tabsButtonModifier: Modifier,
+    selectedTabIndex: Int,
+    onTabSelect: (EntityType) -> Unit,
+    modifier: Modifier = Modifier,
+    tabsButtonModifier: Modifier = Modifier,
     corner: Dp,
     iconSize: Dp,
     opacity: Float = 1.0f
 ) {
-    Row(modifier = tabMenuModifier, horizontalArrangement = Arrangement.SpaceAround) {
-        entityTypes.forEach { entityType ->
+    Row(modifier = modifier, horizontalArrangement = Arrangement.SpaceAround) {
+        entityTypes.forEachIndexed { index, entityType ->
+            val isSelected = index == selectedTabIndex
             FloatingActionButton(
-                onClick = { EntityListAction.OnTabSelection(entityType) },
+                onClick = { onTabSelect(entityType) },
                 content = { 
                     Icon(
                         imageVector = entityType.icon, 
@@ -36,7 +39,10 @@ fun FloatingTabSelector(
                 },
                 modifier = tabsButtonModifier,
                 shape = RoundedCornerShape(corner),
-                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = opacity),
+                containerColor = if (isSelected) 
+                    MaterialTheme.colorScheme.primary.copy(alpha = opacity)
+                else 
+                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = opacity),
             )
         }
     }

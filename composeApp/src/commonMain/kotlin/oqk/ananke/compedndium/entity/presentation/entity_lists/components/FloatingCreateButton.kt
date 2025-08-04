@@ -19,17 +19,18 @@ import oqk.ananke.compedndium.entity.presentation.entity_lists.EntityListAction
 
 @Composable
 fun FloatingCreateButton(
-    createModifier: Modifier,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     corner: Dp,
     opacity: Float,
     iconSize: Dp
 ) {
     FloatingActionButton(
-        onClick = { EntityListAction.OnCreateButtonClick(null)},
-        modifier = Modifier.semantics {
+        onClick = onClick,
+        modifier = modifier.semantics {
             contentDescription = "Create new item"
             role = Role.Button
-        }.then(createModifier),
+        },
         shape = RoundedCornerShape(corner),
         containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = opacity),
         content = {

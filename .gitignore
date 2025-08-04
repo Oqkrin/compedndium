@@ -1,18 +1,57 @@
-*.iml
-.kotlin
-.gradle
+# Gradle
+.gradle/
 **/build/
-xcuserdata
 !src/**/build/
+gradlew
+gradlew.bat
+gradle-wrapper.jar
+
+# Kotlin
+.kotlin/
+*.iml
+
+# IDE
+.idea/
+*.iws
+*.ipr
+out/
+
+# Android
 local.properties
-.idea
-.DS_Store
-captures
-.externalNativeBuild
-.cxx
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+
+# iOS
+xcuserdata/
 *.xcodeproj/*
 !*.xcodeproj/project.pbxproj
 !*.xcodeproj/xcshareddata/
 !*.xcodeproj/project.xcworkspace/
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Desktop
+*.dmg
+*.msi
+*.deb
+*.rpm
+
+# System
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*~

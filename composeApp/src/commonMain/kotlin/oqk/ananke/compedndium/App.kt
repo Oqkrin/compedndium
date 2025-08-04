@@ -1,16 +1,18 @@
 package oqk.ananke.compedndium
 
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.Composable
+import oqk.ananke.compedndium.core.presentation.theme.AppTheme
+import oqk.ananke.compedndium.di.appModule
 import oqk.ananke.compedndium.entity.presentation.entity_lists.EntityListScreenRoot
-import oqk.ananke.compedndium.entity.presentation.entity_lists.EntityListViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.KoinApplication
 
 @Composable
 @Preview
 fun App() {
-    EntityListScreenRoot(
-        viewModel = remember { EntityListViewModel() },
-        onEntityClick = {}
-    )
+    KoinApplication(application = { modules(appModule) }) {
+        AppTheme {
+            EntityListScreenRoot(onEntityClick = {})
+        }
+    }
 }

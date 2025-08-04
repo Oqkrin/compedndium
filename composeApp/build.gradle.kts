@@ -37,6 +37,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation("androidx.compose.ui:ui-text-google-fonts:1.8.1")
 
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)

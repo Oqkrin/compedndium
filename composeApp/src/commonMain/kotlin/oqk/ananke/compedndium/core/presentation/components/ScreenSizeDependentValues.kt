@@ -1,5 +1,6 @@
 package oqk.ananke.compedndium.core.presentation.components
 
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
@@ -10,6 +11,7 @@ import kotlin.math.sqrt
  * Centralized dimensions class for responsive UI
  * All proportional dimensions are calculated once in App.kt and passed down to components
  */
+@Stable
 data class ScreenSizeDependentValues(
 
     // Screen properties
