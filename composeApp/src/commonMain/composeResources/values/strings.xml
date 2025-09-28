@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_placeholder">Search entities...</string>
+    <string name="create_new_item">Create new item</string>
+    <string name="theme_mode">Theme Mode</string>
+    <string name="view_mode">View Mode</string>
+    <string name="search_toggle">Toggle search</string>
+</resources>

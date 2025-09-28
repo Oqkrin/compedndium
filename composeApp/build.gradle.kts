@@ -37,7 +37,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-            implementation("androidx.compose.ui:ui-text-google-fonts:1.8.1")
+            implementation(libs.androidx.ui.text.google.fonts)
 
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
@@ -52,10 +52,13 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.adaptive)
 
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             api(libs.koin.core)
+
+            implementation(libs.material3)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

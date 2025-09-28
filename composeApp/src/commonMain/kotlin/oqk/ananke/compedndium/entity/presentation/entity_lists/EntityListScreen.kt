@@ -1,169 +1,233 @@
 package oqk.ananke.compedndium.entity.presentation.entity_lists
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PhoneDisabled
-import androidx.compose.material.icons.filled.PhoneEnabled
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SmallFloatingActionButton
-import androidx.compose.material3.Surface
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AdminPanelSettings
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.DashboardCustomize
+import androidx.compose.material.icons.filled.DeviceHub
+import androidx.compose.material.icons.filled.Devices
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.LogoDev
+import androidx.compose.material.icons.filled.Monitor
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.AdminPanelSettings
+import androidx.compose.material.icons.outlined.DashboardCustomize
+import androidx.compose.material.icons.outlined.DeviceHub
+import androidx.compose.material.icons.outlined.Devices
+import androidx.compose.material.icons.outlined.LogoDev
+import androidx.compose.material.icons.outlined.Monitor
+import androidx.compose.material3.*
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import org.koin.compose.viewmodel.koinViewModel
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.zIndex
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import oqk.ananke.compedndium.core.presentation.components.ScreenSizeDependentValues
+import androidx.window.core.layout.WindowSizeClass
+import compedndium.composeapp.generated.resources.Res
+import compedndium.composeapp.generated.resources.create_new_item
+import compedndium.composeapp.generated.resources.theme_mode
+import oqk.ananke.compedndium.core.data.ScreenPhiUnits
+import oqk.ananke.compedndium.core.domain.WindowSizes
+import oqk.ananke.compedndium.core.presentation.components.PhIconButton
+import oqk.ananke.compedndium.core.presentation.components.SearchBar
+import oqk.ananke.compedndium.core.presentation.theme.CompedndiumTheme
 import oqk.ananke.compedndium.entity.domain.Entity
-import oqk.ananke.compedndium.entity.domain.EntityType
-
-import oqk.ananke.compedndium.core.presentation.components.ErrorDisplay
-import oqk.ananke.compedndium.entity.presentation.entity_lists.components.EntityGrid
-import oqk.ananke.compedndium.entity.presentation.entity_lists.components.FloatingActionBar
+import oqk.ananke.compedndium.entity.presentation.entity_lists.components.Favorites
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun EntityListScreenRoot(
     onEntityClick: (Entity) -> Unit,
+    onCreateEntity: (Entity?) -> Unit = {},
     modifier: Modifier = Modifier,
-    viewModel: EntityListViewModel = koinViewModel()
+    viewModel: EntityListViewModel = koinViewModel(),
+    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    EntityListScreen(
-        state = state,
-        onAction = { action -> 
-            when(action) {
-                is EntityListAction.OnEntityClick -> onEntityClick(action.entity)
-                else -> viewModel.onAction(action)
-            }
-        },
-        modifier = modifier
-    )
-}
 
+    CompedndiumTheme(isDynamicThemeOn = state.isDynamicThemeOn, isDarkThemeOn = state.isDarkModeOn) {
+        EntityListScreen(
+            state = state,
+            windowSizeClass = windowSizeClass,
+            onAction = { action -> 
+                when(action) {
+                    is EntityListAction.OnEntityClick -> onEntityClick(action.entity)
+                    is EntityListAction.OnCreateButtonClick -> onCreateEntity(action.entity)
+                    else -> viewModel.onAction(action)
+                }
+            },
+            modifier = modifier
+        )
+    }
+}
 
 @Composable
 private fun EntityListScreen(
     state: EntityListState,
+    windowSizeClass: WindowSizeClass,
     onAction: (EntityListAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        modifier = modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-            BoxWithConstraints(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .windowInsetsPadding(WindowInsets.safeDrawing)
+    Surface(modifier = modifier.fillMaxSize()) {
+        BoxWithConstraints(modifier = Modifier) {
+            val (wDebug, hDebug) = remember(state.debugWindowSize) {
+                if (state.isDebugSizeOn)
+                    state.debugWindowSize?.minWidth to state.debugWindowSize?.minHeight
+                else null to null
+            }
+
+            remember(windowSizeClass) {
+                onAction(
+                    EntityListAction.OnWindowClassSizeChange(
+                        WindowSizes.match(
+                            windowSizeClass.windowWidthSizeClass,
+                            windowSizeClass.windowHeightSizeClass
+                        )
+                    )
+                )
+            }
+
+            val values = remember(wDebug, hDebug, maxHeight, maxWidth) {
+                ScreenPhiUnits(
+                    wDebug ?: maxWidth,
+                    hDebug ?: maxHeight,
+                    windowSizeClass.windowWidthSizeClass,
+                    windowSizeClass.windowHeightSizeClass
+                )
+            }
+
+            Box(
+                Modifier
+                    .size(values.wUnit(0), values.hUnit(0))
+                    .windowInsetsPadding(WindowInsets.systemBars)
+                    .align(Alignment.Center)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
-                var phoneMode by rememberSaveable { mutableStateOf(false) }
-                val values = rememberScreenValues(maxWidth, maxHeight, phoneMode)
-                
-                val displayEntities = state.currentEntities
-                
-                if (state.errorMessage != null) {
-                    ErrorDisplay(
-                        error = state.errorMessage,
-                        onRetry = { /* TODO: Add retry logic */ },
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                } else {
-                    ScreenContainer(
-                        entities = displayEntities,
-                        values = values,
-                        phoneMode = phoneMode,
-                        state = state,
-                        onPhoneModeToggle = { phoneMode = !phoneMode },
-                        onAction = onAction
-                    )
-                }
+
+                Favorites(
+                    Modifier.padding(top = values.screenHeightPadding).align(Alignment.TopCenter),
+                    values
+                )
+
+
+                DebugToggles(
+                    windowSize = state.debugWindowSize ?: state.currentWindowSize,
+                    isDebugSizeOn = state.isDebugSizeOn,
+                    isDarkMode = state.isDarkModeOn,
+                    isDynamicModeOn = state.isDynamicThemeOn,
+                    onAction = onAction,
+                    modifier = Modifier.zIndex(1f)
+                )
+
+                SearchBar(
+                    modifier = Modifier.zIndex(1f).align(if (values.isLandscape) Alignment.TopEnd else Alignment.BottomEnd)
+                        .padding(bottom = values.screenHeightPadding + values.minUnit(4) + 4.dp, top = values.screenHeightPadding)
+                        .padding(horizontal = values.screenWidthPadding),
+                    state = state,
+                    onAction = onAction,
+                    values = values,
+                )
+
+
+                PhIconButton(
+                    title = stringResource(Res.string.create_new_item),
+                    onClick = { onAction(EntityListAction.OnCreateButtonClick(null)) },
+                    modifier = Modifier
+                        .zIndex(1f)
+                        .padding(values.screenWidthPadding, values.screenHeightPadding)
+                        .size(values.minUnit(4))
+                        .align(Alignment.BottomEnd)
+                        ,
+                    iconContainerModifier = Modifier.size(values.minUnit(5)),
+                    icon = Icons.Default.Add,
+                    iconColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            }
         }
     }
 }
-
 @Composable
-private fun rememberScreenValues(
-    maxWidth: androidx.compose.ui.unit.Dp,
-    maxHeight: androidx.compose.ui.unit.Dp,
-    phoneMode: Boolean
-) = remember(maxWidth, maxHeight, phoneMode) {
-    if (phoneMode) {
-        ScreenSizeDependentValues(
-            screenWidth = (225.dp) * 3 / 2,
-            screenHeight = (500.dp) * 3 / 2
-        )
-    } else {
-        ScreenSizeDependentValues(maxWidth, maxHeight)
-    }
-}
-
-@Composable
-private fun ScreenContainer(
-    entities: List<Entity>,
-    values: ScreenSizeDependentValues,
-    phoneMode: Boolean,
-    state: EntityListState,
-    onPhoneModeToggle: () -> Unit,
-    onAction: (EntityListAction) -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .size(values.screenWidth, values.screenHeight)
-    ) {
-        EntityGrid(
-            entities = entities,
-            onEntityClick = { entity -> onAction(EntityListAction.OnEntityClick(entity)) },
-            values = values
-        )
-        
-        PhoneModeToggle(
-            phoneMode = phoneMode,
-            onToggle = onPhoneModeToggle,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .zIndex(1f)
-        )
-        
-        FloatingActionBar(
-            values = values,
-            selectedTabIndex = state.tabIndex,
-            onAction = onAction,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .zIndex(1f)
-        )
-    }
-}
-
-@Composable
-private fun PhoneModeToggle(
-    phoneMode: Boolean,
-    onToggle: () -> Unit,
+private fun DebugToggles(
+    windowSize: WindowSizes,
+    isDebugSizeOn: Boolean,
+    isDarkMode: Boolean,
+    isDynamicModeOn: Boolean,
+    onAction: (EntityListAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    SmallFloatingActionButton(
-        onClick = onToggle,
+    val lightDarkModeIcon = remember(isDarkMode) {
+        if (isDarkMode) Icons.Default.LightMode else Icons.Default.DarkMode
+    }
+
+    val dynamicThemeIcon = remember(isDynamicModeOn) {
+        if (isDynamicModeOn) Icons.Filled.DashboardCustomize else Icons.Outlined.DashboardCustomize
+    }
+
+    val debugSizeIcon = remember(isDebugSizeOn) {
+        if (isDebugSizeOn) Icons.Filled.Devices else Icons.Outlined.Devices
+    }
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
+            .width(intrinsicSize = IntrinsicSize.Min)
+            .height(intrinsicSize = IntrinsicSize.Min)
+            .padding(8.dp)
+            .shadow(6.dp, CircleShape)
+            .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
     ) {
-        Icon(
-            imageVector = if (phoneMode) Icons.Default.PhoneEnabled else Icons.Default.PhoneDisabled,
-            contentDescription = "View Mode"
+        Row {
+            IconButton(
+                onClick = { onAction(EntityListAction.OnThemeToggle) }
+            ) {
+                Icon(
+                    imageVector = lightDarkModeIcon,
+                    contentDescription = stringResource(Res.string.theme_mode)
+                )
+            }
+
+            IconButton(
+                onClick = { onAction(EntityListAction.OnDynamicThemeToggle) }
+            ) {
+                Icon(
+                    imageVector = dynamicThemeIcon,
+                    contentDescription = stringResource(Res.string.theme_mode)
+                )
+            }
+
+            IconButton(
+                onClick = { onAction(EntityListAction.OnDebugModeClick) }
+            ) {
+                Icon(
+                    imageVector = debugSizeIcon,
+                    contentDescription = windowSize.displayName
+                )
+            }
+        }
+
+        BasicText(
+            modifier = Modifier.fillMaxWidth(),
+            text = windowSize.displayName,
+            style = MaterialTheme.typography.labelSmall.copy(textAlign = TextAlign.Center),
+            autoSize = TextAutoSize.StepBased(minFontSize = 1.sp),
+            maxLines = 1
         )
+
     }
 }
-
-
 
